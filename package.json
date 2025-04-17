@@ -1,0 +1,12 @@
+{
+  "name": "mean-stack-docker",
+  "version": "1.0.0",
+  "description": "## Descripción Este proyecto implementa una arquitectura MEAN Stack (MongoDB, Express, Angular, Node.js) completamente dockerizada, permitiendo un entorno de desarrollo aislado y consistente.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

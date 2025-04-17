@@ -1,0 +1,57 @@
+version: '3.8'
+services:
+  # Servicio de MongoDB
+  db:
+    image: mongo:latest
+    container_name: mean-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: meanDB
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo/init.js:/docker-entrypoint-initdb.d/init.js:ro
+    networks:
+      - mean-network
+
+  # Backend Node.js/Express
+  backend:
+    build: ./backend
+    container_name: mean-api
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DB_URI=mongodb://root:example@db:27017/meanDB?authSource=admin
+    depends_on:
+      - db
+    networks:
+      - mean-network
+
+  # Frontend Angular
+  frontend:
+    build: ./frontend
+    container_name: mean-frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "4200:4200"
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - backend
+    networks:
+      - mean-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  mean-network:
+    driver: bridge
