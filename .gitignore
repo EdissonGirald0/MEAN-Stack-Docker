@@ -36,3 +36,68 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# ===========================================
+# PROYECTOS CREADOS - NO SUBIR AL REPO
+# ===========================================
+# Carpetas de proyectos generados por los scripts
+demo-*/
+proyecto-*/
+test-*/
+*-proyecto/
+*-test/
+*-demo/
+
+# Patrones para proyectos creados dinámicamente
+[a-z]*-[0-9]*/
+[a-z]*_[a-z]*/
+[a-z]*-test/
+[a-z]*-demo/
+[a-z]*-example/
+
+# ===========================================
+# ARCHIVOS TEMPORALES Y CACHE
+# ===========================================
+# Archivos temporales
+*.tmp
+*.temp
+*.swp
+*.swo
+*.bak
+*.backup
+*~
+
+# Cache y archivos de sistema
+.cache/
+.parcel-cache/
+.npm/
+.eslintcache
+.yarn-integrity
+
+# ===========================================
+# DOCKER Y CONTENEDORES
+# ===========================================
+# Volúmenes de Docker
+docker-volumes/
+mongodb_data/
+redis_data/
+postgres_data/
+
+# Imágenes y contenedores locales
+.dockerignore
+
+# ===========================================
+# BACKUPS Y ARCHIVOS DE RESPALDO
+# ===========================================
+backups/
+*.tar.gz
+*.zip
+*.rar
+
+# ===========================================
+# ARCHIVOS DE CONFIGURACIÓN LOCAL
+# ===========================================
+# Configuraciones específicas del entorno local
+config.local.*
+settings.local.*
+local.*

@@ -1,231 +1,293 @@
-# Proyecto MEAN Stack con Docker
+# 🚀 Entorno de Desarrollo MEAN Stack con Docker
 
-## Descripción
-Implementación de una arquitectura MEAN Stack dockerizada para desarrollo.
+Un entorno completo y flexible para crear y gestionar múltiples proyectos MEAN Stack (MongoDB, Express.js, Angular, Node.js) de forma aislada usando Docker y scripts automatizados.
 
-## Prerrequisitos
-- Docker y Docker Compose
-- Node.js 18.x o superior (desarrollo local)
-- Angular CLI (desarrollo local)
+## ✨ Características Principales
 
-## Instalación Paso a Paso
+- **🔧 Múltiples Proyectos**: Desarrolla varios proyectos MEAN Stack simultáneamente
+- **🎯 Aislamiento Total**: Cada proyecto tiene sus propios contenedores, puertos y recursos
+- **⚡ Configuración Flexible**: Variables de entorno personalizables por proyecto
+- **🛠️ Scripts Automatizados**: Gestión completa con comandos simples
+- **📦 Plantillas Reutilizables**: Estructuras base para diferentes tipos de aplicaciones
+- **🔄 Hot Reload**: Desarrollo con recarga automática
+- **🔒 Seguridad**: Configuración de seguridad por defecto
 
-### 1. Clonar el Repositorio
+## 📋 Prerrequisitos
+
+- **Docker** y **Docker Compose**
+- **Git**
+- **Node.js 18+** (opcional, para desarrollo local)
+
+## 🚀 Inicio Rápido
+
+### 1. Clonar y Configurar
 ```bash
 git clone <url-repositorio>
 cd MEAN-Stack-Docker
+chmod +x scripts/*.sh
 ```
 
-### 2. Estructura de Directorios
+### 2. Crear tu Primer Proyecto
 ```bash
-mkdir -p backend/src/{config,models,routes,middleware}
-mkdir -p frontend
-mkdir -p mongo
+# Proyecto básico
+./scripts/create-project.sh mi-primer-proyecto
+
+# Proyecto con puerto específico
+./scripts/create-project.sh -p 4000 mi-proyecto-produccion
 ```
 
-### 3. Configuración Backend
-1. Inicializar proyecto Node:
+### 3. Iniciar y Desarrollar
 ```bash
-cd backend
-npm init -y
+cd mi-primer-proyecto
+./start.sh
+
+# Acceder a los servicios:
+# Backend: http://localhost:3000
+# Frontend: http://localhost:4200
+# MongoDB: mongodb://localhost:2717
 ```
 
-2. Instalar dependencias:
-```bash
-npm install express mongoose cors dotenv nodemon
-```
-
-3. Crear archivo `.env`:
-```bash
-echo "NODE_ENV=development
-PORT=3000
-DB_URI=mongodb://root:example@db:27017/meanDB?authSource=admin" > .env
-```
-
-4. Crear `.dockerignore`:
-```bash
-echo "node_modules
-.env" > .dockerignore
-```
-
-### 4. Configuración Frontend
-1. Crear proyecto Angular:
-```bash
-ng new frontend --routing --style=scss
-cd frontend
-```
-
-2. Crear `.dockerignore`:
-```bash
-echo "node_modules
-dist" > .dockerignore
-```
-
-3. Crear proxy.conf.json:
-```bash
-echo '{
-  "/api": {
-    "target": "http://localhost:3000",
-    "secure": false
-  }
-}' > proxy.conf.json
-```
-
-### 5. Configuración MongoDB
-1. Crear script de inicialización:
-```bash
-echo 'db.createUser({
-  user: "root",
-  pwd: "example",
-  roles: [{ role: "readWrite", db: "meanDB" }]
-});
-db = db.getSiblingDB("meanDB");
-db.createCollection("users");' > mongo/init.js
-```
-
-### 6. Iniciar el Proyecto
-1. Construir e iniciar contenedores:
-```bash
-docker-compose up -d --build
-```
-
-2. Verificar el estado:
-```bash
-docker-compose ps
-```
-
-### 7. Configuración de Git
-1. Crear archivos .gitignore:
-```bash
-# En la raíz del proyecto
-curl -o .gitignore https://raw.githubusercontent.com/github/gitignore/master/Node.gitignore
-
-# En el directorio backend
-cd backend
-curl -o .gitignore https://raw.githubusercontent.com/github/gitignore/master/Node.gitignore
-
-# En el directorio frontend
-cd ../frontend
-curl -o .gitignore https://raw.githubusercontent.com/github/gitignore/master/Angular.gitignore
-```
-
-2. Inicializar repositorio:
-```bash
-git init
-git add .
-git commit -m "Configuración inicial del proyecto MEAN Stack"
-```
-
-## Variables de Entorno
-
-### Configuración Inicial
-1. Copia los archivos de ejemplo:
-```bash
-# Backend
-cp backend/.env.example backend/.env
-
-# Frontend
-cp frontend/.env.example frontend/.env
-```
-
-2. Modifica los valores según tu entorno:
-```bash
-# Editar backend/.env
-nano backend/.env
-
-# Editar frontend/.env
-nano frontend/.env
-```
-
-### Variables Backend (.env)
-- `NODE_ENV`: Entorno de ejecución (development/production)
-- `PORT`: Puerto del servidor backend
-- `DB_URI`: URL de conexión a MongoDB
-- `JWT_SECRET`: Clave secreta para tokens JWT
-- `CORS_ORIGIN`: Origen permitido para CORS
-
-### Variables Frontend (.env)
-- `PORT`: Puerto del servidor frontend
-- `HOST`: Host del servidor frontend
-- `API_URL`: URL base de la API backend
-- `ENVIRONMENT`: Entorno de ejecución
-
-Nota: Nunca subas los archivos .env al repositorio. Usa los archivos .env.example como plantilla.
-
-## Uso del Proyecto
-
-### Desarrollo Local
-1. Backend (http://localhost:3000):
-- Los cambios en `/backend/src` se recargan automáticamente
-- Logs: `docker-compose logs -f backend`
-
-2. Frontend (http://localhost:4200):
-- Los cambios en `/frontend/src` se recargan automáticamente
-- Logs: `docker-compose logs -f frontend`
-
-3. MongoDB (mongodb://localhost:27017):
-- Acceder a la base de datos:
-```bash
-docker-compose exec db mongosh -u root -p example
-```
+## 🛠️ Gestión de Proyectos
 
 ### Comandos Principales
 ```bash
-# Iniciar servicios
-docker-compose up -d
+# Listar todos los proyectos
+./scripts/manage-projects.sh list
 
-# Detener servicios
-docker-compose down
+# Crear nuevo proyecto
+./scripts/manage-projects.sh create mi-nuevo-proyecto
 
-# Reconstruir servicios
-docker-compose up -d --build
+# Gestionar proyecto específico
+./scripts/manage-projects.sh start mi-proyecto
+./scripts/manage-projects.sh stop mi-proyecto
+./scripts/manage-projects.sh restart mi-proyecto
+./scripts/manage-projects.sh logs mi-proyecto
+./scripts/manage-projects.sh status mi-proyecto
 
-# Ver logs de un servicio específico
-docker-compose logs -f [servicio]
+# Eliminar proyecto
+./scripts/manage-projects.sh delete mi-proyecto
 
-# Reiniciar un servicio
-docker-compose restart [servicio]
+# Backup y restauración
+./scripts/manage-projects.sh backup mi-proyecto
+./scripts/manage-projects.sh restore mi-proyecto archivo-backup.tar.gz
 ```
 
-## Solución de Problemas
-
-### Error de Conexión MongoDB
+### Scripts Individuales por Proyecto
 ```bash
-# Reiniciar contenedor de base de datos
-docker-compose restart db
-
-# Si persiste, eliminar volumen y recrear
-docker-compose down -v
-docker-compose up -d
+cd mi-proyecto
+./start.sh    # Iniciar servicios
+./stop.sh     # Detener servicios
+./logs.sh     # Ver logs
 ```
 
-### Problemas con Node Modules
-```bash
-# Reconstruir contenedor sin caché
-docker-compose build --no-cache [servicio]
-docker-compose up -d
+## 📁 Estructura del Proyecto
+
+```
+MEAN-Stack-Docker/
+├── scripts/                 # Scripts de gestión
+│   ├── create-project.sh   # Crear nuevos proyectos
+│   ├── manage-projects.sh  # Gestionar proyectos
+│   └── quick-start.sh      # Demostración rápida
+├── templates/              # Plantillas predefinidas
+│   └── README.md          # Documentación de plantillas
+├── docker-compose.yml      # Configuración base Docker
+├── env.example            # Variables de entorno de ejemplo
+├── .gitignore             # Archivos ignorados por Git
+└── README.md              # Esta documentación
+
+# Proyectos creados (no se suben al repo)
+mi-proyecto-1/
+├── backend/               # API Node.js/Express
+│   ├── src/
+│   ├── package.json
+│   └── Dockerfile
+├── frontend/              # Aplicación Angular
+│   ├── src/
+│   ├── package.json
+│   └── Dockerfile
+├── mongo/                # Scripts MongoDB
+├── .env                  # Variables del proyecto
+├── docker-compose.yml    # Configuración específica
+├── start.sh             # Script de inicio
+├── stop.sh              # Script de parada
+└── logs.sh              # Script de logs
 ```
 
-### Error en Angular
+## ⚙️ Configuración
+
+### Variables de Entorno por Proyecto
+Cada proyecto tiene su propio archivo `.env`:
+
+```env
+# Configuración del proyecto
+PROJECT_NAME=mi-proyecto
+NODE_ENV=development
+
+# Puertos (únicos por proyecto)
+BACKEND_PORT=3000
+FRONTEND_PORT=4200
+MONGO_PORT=2717
+
+# MongoDB
+MONGO_ROOT_USER=root
+MONGO_ROOT_PASSWORD=example
+MONGO_DATABASE=miProyectoDB
+
+# Seguridad
+JWT_SECRET=mi-secreto-jwt
+CORS_ORIGIN=http://localhost:4200
+
+# Servicios opcionales
+REDIS_PORT=6379
+NGINX_PORT=80
+NGINX_SSL_PORT=443
+```
+
+### Personalización de Puertos
+Los proyectos usan puertos únicos automáticamente:
+- **Proyecto 1**: Backend:3000, Frontend:4200, MongoDB:2717
+- **Proyecto 2**: Backend:3001, Frontend:4201, MongoDB:2718
+- **Proyecto 3**: Backend:3002, Frontend:4202, MongoDB:2719
+
+## 🔧 Desarrollo
+
+### Acceso a Contenedores
 ```bash
-# Acceder al contenedor
+# Backend
+docker-compose exec backend bash
+npm install nueva-dependencia
+
+# Frontend
 docker-compose exec frontend bash
-# Instalar dependencias manualmente
-npm install
+ng generate component mi-componente
+
+# MongoDB
+docker-compose exec db mongosh -u root -p example
 ```
 
-## Endpoints API
-- `GET /api/health`: Estado del servidor
-- Documentación completa de API en `/backend/docs`
+### Hot Reload
+- **Backend**: Los cambios en `backend/src` se recargan automáticamente
+- **Frontend**: Los cambios en `frontend/src` se recargan automáticamente
+- **MongoDB**: Persistencia de datos en volúmenes Docker
 
-## Consideraciones de Seguridad
-1. Modificar credenciales por defecto
-2. Configurar CORS según necesidad
-3. Implementar autenticación JWT
-4. Usar variables de entorno cifradas
+### Logs en Tiempo Real
+```bash
+# Todos los servicios
+./logs.sh
 
-## Desarrollo y Contribuciones
-1. Crear rama: `git checkout -b feature/nombre`
-2. Commit cambios: `git commit -am "descripción"`
-3. Push rama: `git push origin feature/nombre`
-4. Crear Pull Request
+# Servicio específico
+./logs.sh backend
+./logs.sh frontend
+./logs.sh db
+```
+
+## 🚀 Producción
+
+### Configuración para Producción
+```bash
+# Crear proyecto para producción
+./scripts/create-project.sh -p 4000 mi-api-produccion
+
+# Configurar variables de producción
+cd mi-api-produccion
+# Editar .env con configuración de producción
+```
+
+### Servicios Opcionales
+```bash
+# Incluir Redis para caché
+docker-compose --profile cache up -d
+
+# Incluir Nginx como proxy reverso
+docker-compose --profile production up -d
+```
+
+## 🧹 Mantenimiento
+
+### Limpiar Proyectos de Prueba
+```bash
+# Eliminar proyectos de prueba
+./scripts/manage-projects.sh delete demo-mean-stack
+./scripts/manage-projects.sh delete proyecto-test
+
+# Limpiar recursos Docker
+docker system prune -a
+docker volume prune
+```
+
+### Backup y Restauración
+```bash
+# Crear backup
+./scripts/manage-projects.sh backup mi-proyecto-importante
+
+# Restaurar desde backup
+./scripts/manage-projects.sh restore mi-proyecto-nuevo backup.tar.gz
+```
+
+## 🔒 Seguridad
+
+### Configuración por Defecto
+- Credenciales de MongoDB personalizables
+- JWT secrets únicos por proyecto
+- CORS configurado
+- Variables de entorno separadas
+
+### Mejores Prácticas
+1. **Cambiar credenciales por defecto** en producción
+2. **Usar secrets de Docker** para credenciales sensibles
+3. **Configurar firewall** y acceso restringido
+4. **Mantener dependencias actualizadas**
+5. **Hacer backups regulares** de proyectos importantes
+
+## 🛠️ Solución de Problemas
+
+### Puerto en Uso
+```bash
+# Cambiar puerto en .env del proyecto
+BACKEND_PORT=3001
+FRONTEND_PORT=4201
+```
+
+### Conflicto de Contenedores
+```bash
+# Cambiar nombre del proyecto
+PROJECT_NAME=mi-proyecto-unico
+```
+
+### Problemas de Permisos
+```bash
+# Dar permisos de ejecución
+chmod +x scripts/*.sh
+chmod +x */start.sh */stop.sh */logs.sh
+```
+
+### Limpiar Recursos
+```bash
+# Detener y eliminar contenedores
+docker-compose down -v
+
+# Eliminar imágenes no utilizadas
+docker system prune -a
+```
+
+## 📚 Recursos Adicionales
+
+- **Plantillas**: Consulta `templates/README.md` para plantillas avanzadas
+- **Scripts**: Revisa `scripts/` para comandos adicionales
+- **Docker**: Documentación oficial de Docker Compose
+
+## 🤝 Contribuir
+
+1. Fork el proyecto
+2. Crear rama para feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit cambios (`git commit -am 'Agregar nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Crear Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT.
+
+---
+
+**¡Disfruta desarrollando con tu entorno MEAN Stack! 🚀**

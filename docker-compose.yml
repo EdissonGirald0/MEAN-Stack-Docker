@@ -1,0 +1,109 @@
+version: '3.8'
+
+services:
+  # Servicio de MongoDB
+  db:
+    image: mongo:latest
+    container_name: ${PROJECT_NAME:-mean}-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:-root}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-example}
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE:-meanDB}
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo/init.js:/docker-entrypoint-initdb.d/init.js:ro
+    networks:
+      - mean-network
+    restart: unless-stopped
+
+  # Backend Node.js/Express
+  backend:
+    build: 
+      context: ./backend
+      args:
+        NODE_VERSION: ${NODE_VERSION:-18}
+    container_name: ${PROJECT_NAME:-mean}-api
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - PORT=3000
+      - DB_URI=mongodb://${MONGO_ROOT_USER:-root}:${MONGO_ROOT_PASSWORD:-example}@db:27017/${MONGO_DATABASE:-meanDB}?authSource=admin
+      - JWT_SECRET=${JWT_SECRET:-your-secret-key}
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:4200}
+    depends_on:
+      - db
+    networks:
+      - mean-network
+    restart: unless-stopped
+
+  # Frontend Angular
+  frontend:
+    build: 
+      context: ./frontend
+      args:
+        NODE_VERSION: ${NODE_VERSION:-18}
+    container_name: ${PROJECT_NAME:-mean}-frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "${FRONTEND_PORT:-4200}:4200"
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - PORT=4200
+      - HOST=0.0.0.0
+    depends_on:
+      - backend
+    networks:
+      - mean-network
+    restart: unless-stopped
+
+  # Servicio opcional: Redis para caché
+  redis:
+    image: redis:alpine
+    container_name: ${PROJECT_NAME:-mean}-redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - mean-network
+    restart: unless-stopped
+    profiles:
+      - cache
+
+  # Servicio opcional: Nginx como proxy reverso
+  nginx:
+    image: nginx:alpine
+    container_name: ${PROJECT_NAME:-mean}-nginx
+    ports:
+      - "${NGINX_PORT:-80}:80"
+      - "${NGINX_SSL_PORT:-443}:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - mean-network
+    restart: unless-stopped
+    profiles:
+      - production
+
+volumes:
+  mongodb_data:
+    name: ${PROJECT_NAME:-mean}-mongodb-data
+  redis_data:
+    name: ${PROJECT_NAME:-mean}-redis-data
+
+networks:
+  mean-network:
+    driver: bridge
+    name: ${PROJECT_NAME:-mean}-network 
