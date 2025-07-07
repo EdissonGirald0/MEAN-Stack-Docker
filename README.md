@@ -1,3 +1,13 @@
+[![Licencia MIT](https://img.shields.io/badge/Licencia-MIT-green.svg)](LICENSE)
+[![Plantilla](https://img.shields.io/badge/Tipo-Template-blue.svg)](https://github.com/EdissonGirald0/MEAN-Stack-Docker)
+[![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Express](https://img.shields.io/badge/Express.js-000000?logo=express&logoColor=white)](https://expressjs.com/)
+[![Angular](https://img.shields.io/badge/Angular-DD0031?logo=angular&logoColor=white)](https://angular.io/)
+[![Node.js](https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+
+> Proyecto creado por [Edisson Giraldo](https://github.com/EdissonGirald0/MEAN-Stack-Docker) · [Web personal](https://edissongirald0.github.io/)
+
 # 🚀 Entorno de Desarrollo MEAN Stack con Docker
 
 Un entorno completo y flexible para crear y gestionar múltiples proyectos MEAN Stack (MongoDB, Express.js, Angular, Node.js) de forma aislada usando Docker y scripts automatizados.
